@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,14 +13,6 @@ using Microsoft.Extensions.Options;
 
 namespace BenjaminAbt.AspNetCore.CloudFlare
 {
-    public class CloudFlareForwardHeaderOptions
-    {
-        public string HeaderName { get; set; } = "CF_CONNECTING_IP";
-        public string HttpClientFactoryName { get; set; } = nameof(CloudFlareForwardHeaderOptions);
-        public string IPv4ListUrl { get; set; } = "https://www.cloudflare.com/ips-v4";
-        public string IPv6ListUrl { get; set; } = "https://www.cloudflare.com/ips-v6";
-    }
-
     public class CloudFlareForwardHeaderMiddleware
     {
         private readonly RequestDelegate _next;
@@ -29,7 +20,7 @@ namespace BenjaminAbt.AspNetCore.CloudFlare
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly CloudFlareForwardHeaderOptions _options;
 
-        private IList<IPAddress>? _cfIPAddressCollection = null;
+        private IList<string>? _cfIpRangeCollection;
 
         private Task? _initializationTask;
         private readonly ForwardedHeadersMiddleware _forwardedHeadersMiddleware;
@@ -46,11 +37,12 @@ namespace BenjaminAbt.AspNetCore.CloudFlare
             _loggerFactory = loggerFactory;
             _httpClientFactory = httpClientFactory;
 
-            _forwardedHeadersMiddleware = new ForwardedHeadersMiddleware(next, loggerFactory, Options.Create(new ForwardedHeadersOptions
-            {
-                ForwardedForHeaderName = _options.HeaderName,
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor
-            }));
+            _forwardedHeadersMiddleware = new ForwardedHeadersMiddleware(next, loggerFactory, Options.Create(
+                new ForwardedHeadersOptions
+                {
+                    ForwardedForHeaderName = _options.HeaderName,
+                    ForwardedHeaders = ForwardedHeaders.XForwardedFor
+                }));
 
             // Start initialization when the app starts
             var registrationCancellationToken = default(CancellationTokenRegistration);
@@ -70,9 +62,11 @@ namespace BenjaminAbt.AspNetCore.CloudFlare
                 _initializationTask = null;
             }
 
-            if (context.Connection.RemoteIpAddress is not null && context.Request.Headers.ContainsKey(_options.HeaderName))
+            if (context.Connection.RemoteIpAddress is not null &&
+                context.Request.Headers.ContainsKey(_options.HeaderName))
             {
-                if (_cfIPAddressCollection?.Any(ip => ip.Equals(context.Connection.RemoteIpAddress)) == true)
+                var remoteIp = context.Connection.RemoteIpAddress;
+                if (_cfIpRangeCollection?.Any(ipRange => remoteIp.IsInSubnet(ipRange)) == true)
                 {
                     await _forwardedHeadersMiddleware.Invoke(context).ConfigureAwait(false);
                 }
@@ -91,33 +85,28 @@ namespace BenjaminAbt.AspNetCore.CloudFlare
 
                 var client = _httpClientFactory.CreateClient(_options.HttpClientFactoryName);
 
-                List<IPAddress> ipCollection = new List<IPAddress>();
+                List<string> ipCollection = new List<string>();
+                if (_options.UseIPv4List)
+                {
+                    var data = await client.GetStringArray(_options.IPv4ListUrl, cancellationToken).ConfigureAwait(false);
+                    ipCollection.AddRange(data);
+                }
 
-                var ip4Data = await client.GetStringAsync(_options.IPv4ListUrl, cancellationToken).ConfigureAwait(false);
-                var ip6Data = await client.GetStringAsync(_options.IPv6ListUrl, cancellationToken).ConfigureAwait(false);
+                if (_options.UseIPv6List)
+                {
+                    var data = await client.GetStringArray(_options.IPv6ListUrl, cancellationToken).ConfigureAwait(false);
+                    ipCollection.AddRange(data);
+                }
 
-                ipCollection.AddRange(ParseCloudFlareIPAddressData(ip4Data));
-                ipCollection.AddRange(ParseCloudFlareIPAddressData(ip6Data));
-
-                _cfIPAddressCollection = ipCollection;
+                _cfIpRangeCollection = ipCollection;
 
                 logger.LogInformation($"Initialization of {nameof(CloudFlareForwardHeaderMiddleware)} completed.");
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"Initialization of {nameof(CloudFlareForwardHeaderMiddleware)} failed with {ex}");
+                logger.LogError(ex,
+                    $"Initialization of {nameof(CloudFlareForwardHeaderMiddleware)} failed with {ex}");
                 throw;
-            }
-
-            static IEnumerable<IPAddress> ParseCloudFlareIPAddressData(string data)
-            {
-                foreach (var entry in data.Split(Environment.NewLine))
-                {
-                    if (IPAddress.TryParse(entry, out var ip2Add))
-                    {
-                        yield return ip2Add;
-                    }
-                }
             }
         }
     }
