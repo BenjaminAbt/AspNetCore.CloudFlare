@@ -5,8 +5,6 @@ VisualStudioVersion = 16.0.30509.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6CFCE01D-574C-4FEE-B50B-A88C82179EC0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenjaminAbt.AspNetCore.CloudFlare", "src\BenjaminAbt.AspNetCore.CloudFlare.csproj", "{C1E8BBC4-B88A-42A0-9F5A-3FED9AB53430}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{731902F3-09B3-4D28-8B55-C3883F5BDF64}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{92B140D0-2B7B-4BE2-8A2B-E4F4160188F1}"
@@ -19,24 +17,26 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\ci.yml = .github\workflows\ci.yml
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenjaminAbt.AspNetCore.CloudFlare", "src\AspNetCore.CloudFlare\BenjaminAbt.AspNetCore.CloudFlare.csproj", "{946E964B-4C88-448F-96AB-BD565300F9A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C1E8BBC4-B88A-42A0-9F5A-3FED9AB53430}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C1E8BBC4-B88A-42A0-9F5A-3FED9AB53430}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C1E8BBC4-B88A-42A0-9F5A-3FED9AB53430}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C1E8BBC4-B88A-42A0-9F5A-3FED9AB53430}.Release|Any CPU.Build.0 = Release|Any CPU
+		{946E964B-4C88-448F-96AB-BD565300F9A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{946E964B-4C88-448F-96AB-BD565300F9A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{946E964B-4C88-448F-96AB-BD565300F9A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{946E964B-4C88-448F-96AB-BD565300F9A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{C1E8BBC4-B88A-42A0-9F5A-3FED9AB53430} = {6CFCE01D-574C-4FEE-B50B-A88C82179EC0}
 		{92B140D0-2B7B-4BE2-8A2B-E4F4160188F1} = {731902F3-09B3-4D28-8B55-C3883F5BDF64}
 		{3F6A5767-5F35-4CEE-BFCF-92B6D79DC698} = {92B140D0-2B7B-4BE2-8A2B-E4F4160188F1}
+		{946E964B-4C88-448F-96AB-BD565300F9A7} = {6CFCE01D-574C-4FEE-B50B-A88C82179EC0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {156F775A-148F-47DB-B4F2-15036403B03B}
