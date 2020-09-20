@@ -10,7 +10,7 @@ on:
 
 env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-  DOTNET_VERSION: '5.0.0-rc.1.20451.14'           # https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/5.0/releases.json
+  DOTNET_VERSION: '5.0.100-rc.1.20452.10'           # https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/5.0/releases.json
   BuildConfig: Release
 
 jobs:
