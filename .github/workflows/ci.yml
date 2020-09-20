@@ -9,36 +9,38 @@ on:
         - main
 
 env:
-  # https://www.nuget.org/packages/GitVersion.Tool
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_VERSION: '5.0.0-rc.1.20451.14'           # https://dotnetcli.blob.core.windows.net/dotnet/release-metadata/5.0/releases.json
   BuildConfig: Release
-  PackageProjects: AspNetCore.CloudFlare/BenjaminAbt.AspNetCore.CloudFlare.csproj
 
 jobs:
     build:
       runs-on: ubuntu-latest
       steps:
-      - uses: actions/checkout@v2
+
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
       
-      - uses: aarnott/nbgv@v0.3 # https://github.com/AArnott/nbgv
+      - name: Versioning
+        uses: dotnet/nbgv@master
         id: nbgv
 
-      - name: Versioning
-        run: echo ${{ steps.nbgv.outputs.SemVer2 }}
+      - name: Version Info
+        run: |
+          echo 'SemVer2: ${{ steps.nbgv.outputs.SemVer2 }}'
+
+      - name: 'Install .NET SDK'
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Build with dotnet
-        run: dotnet build
-              --configuration ${{ env.BuildConfig }}
-              /p:Version=${{ steps.nbgv.outputs.AssemblyVersion }}
-
-      - name: Test with dotnet
-        run: dotnet test 
+        run: dotnet build --configuration ${{ env.BuildConfig }} /p:Version=${{ steps.nbgv.outputs.AssemblyVersion }}
 
       - name: Pack NuGet
-        run: dotnet pack ${{ env.PackageProjects }}
-              --configuration ${{ env.BuildConfig }}
-              /p:Version=${{ steps.nbgv.outputs.NuGetPackageVersion }}
+        run: dotnet pack --configuration ${{ env.BuildConfig }} /p:Version=${{ steps.nbgv.outputs.NuGetPackageVersion }}
 
       - name: Push to NuGet
         run: dotnet nuget push **/*.nupkg

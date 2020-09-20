@@ -7,6 +7,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6CFCE01D-574
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BenjaminAbt.AspNetCore.CloudFlare", "src\BenjaminAbt.AspNetCore.CloudFlare.csproj", "{C1E8BBC4-B88A-42A0-9F5A-3FED9AB53430}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{731902F3-09B3-4D28-8B55-C3883F5BDF64}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{92B140D0-2B7B-4BE2-8A2B-E4F4160188F1}"
+	ProjectSection(SolutionItems) = preProject
+		.github\dependabot.yml = .github\dependabot.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{3F6A5767-5F35-4CEE-BFCF-92B6D79DC698}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\ci.yml = .github\workflows\ci.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +35,8 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C1E8BBC4-B88A-42A0-9F5A-3FED9AB53430} = {6CFCE01D-574C-4FEE-B50B-A88C82179EC0}
+		{92B140D0-2B7B-4BE2-8A2B-E4F4160188F1} = {731902F3-09B3-4D28-8B55-C3883F5BDF64}
+		{3F6A5767-5F35-4CEE-BFCF-92B6D79DC698} = {92B140D0-2B7B-4BE2-8A2B-E4F4160188F1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {156F775A-148F-47DB-B4F2-15036403B03B}
